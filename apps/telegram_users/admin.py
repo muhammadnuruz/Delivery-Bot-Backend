@@ -1,29 +1,45 @@
 from django.contrib import admin
-from django.http import HttpResponse
-import csv
+from django.core.exceptions import ValidationError
+from django_admin_listfilter_dropdown.filters import DropdownFilter
 from .models import TelegramUsers
+from ..orders.models import Order
 
 
 @admin.register(TelegramUsers)
 class TelegramUsersAdmin(admin.ModelAdmin):
-    list_display = ("id", "full_name", "username", "chat_id", "language", "created_at", "updated_at")
-    list_filter = ("language", "created_at", "updated_at")
-    search_fields = ("chat_id", "username", "full_name")
-    ordering = ("-created_at",)
-    readonly_fields = ("created_at", "updated_at")
+    list_display = ('id', 'full_name', 'username', 'chat_id', 'is_courier', 'is_available', 'created_at', 'updated_at')
+    list_display_links = ('id', 'full_name')
+    list_editable = ('is_courier', 'is_available')
+    list_filter = (
+        ('is_courier', DropdownFilter),
+        ('is_available', DropdownFilter),
+        ('created_at', admin.DateFieldListFilter),
+    )
+    search_fields = ('full_name', 'username', 'chat_id')
+    list_per_page = 20
 
-    actions = ["export_as_csv"]
+    class OrderInline(admin.TabularInline):
+        model = Order
+        fk_name = 'user'
+        extra = 1
 
-    def export_as_csv(self, request, queryset):
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="telegram_users.csv"'
-        writer = csv.writer(response)
-        writer.writerow(["ID", "Full Name", "Username", "Chat ID", "Language", "Created At", "Updated At"])
+    inlines = [OrderInline]
 
-        for user in queryset:
-            writer.writerow(
-                [user.id, user.full_name, user.username, user.chat_id, user.language, user.created_at, user.updated_at])
+    def save_model(self, request, obj, form, change):
+        if obj.username and not obj.username.isalnum():
+            raise ValidationError("Username faqat harf va raqamlardan iborat bo‘lishi kerak!")
+        super().save_model(request, obj, form, change)
 
-        return response
+    actions = ['mark_as_courier', 'mark_as_available', 'mark_as_unavailable']
 
-    export_as_csv.short_description = "Export selected as CSV"
+    @admin.action(description="Mark selected users as couriers")
+    def mark_as_courier(self, request, queryset):
+        queryset.update(is_courier=True)
+
+    @admin.action(description="Mark selected users as available")
+    def mark_as_available(self, request, queryset):
+        queryset.update(is_available=True)
+
+    @admin.action(description="Mark selected users as unavailable")
+    def mark_as_unavailable(self, request, queryset):
+        queryset.update(is_available=False)

@@ -1,61 +1,45 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
+from rangefilter.filters import DateRangeFilter, DateTimeRangeFilter
+from admin_numeric_filter.admin import NumericFilterModelAdmin, RangeNumericFilter
+from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter
 from .models import User
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(NumericFilterModelAdmin, admin.ModelAdmin):
     list_display = ('id', 'full_name', 'is_active', 'is_staff', 'is_superuser', 'created_at', 'updated_at')
-    list_filter = ('is_active', 'is_staff', 'is_superuser', 'created_at', 'updated_at')
+    list_display_links = ('id', 'full_name')
+    list_editable = ('is_active', 'is_staff')
+    list_filter = (
+        ('is_active', DropdownFilter),
+        ('is_staff', DropdownFilter),
+        ('is_superuser', DropdownFilter),
+        ('created_at', DateTimeRangeFilter),
+        ('updated_at', DateTimeRangeFilter),
+    )
     search_fields = ('full_name',)
     ordering = ('-created_at',)
     readonly_fields = ('created_at', 'updated_at')
-    list_editable = ('is_active', 'is_staff')
-
     fieldsets = (
         (None, {'fields': ('full_name', 'password')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('created_at', 'updated_at')}),
+        (_('Timestamps'), {'fields': ('created_at', 'updated_at')}),
     )
-
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('full_name', 'password1', 'password2', 'is_staff', 'is_active'),
+            'fields': ('full_name', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser'),
         }),
     )
+    filter_horizontal = ('groups', 'user_permissions')
 
-    actions = ['make_active', 'make_inactive']
+    actions = ['mark_as_active', 'mark_as_inactive']
 
-    def make_active(self, request, queryset):
+    @admin.action(description=_('Mark selected users as active'))
+    def mark_as_active(self, request, queryset):
         queryset.update(is_active=True)
-        self.message_user(request, "Selected users have been activated.")
 
-    make_active.short_description = "Activate selected users"
-
-    def make_inactive(self, request, queryset):
+    @admin.action(description=_('Mark selected users as inactive'))
+    def mark_as_inactive(self, request, queryset):
         queryset.update(is_active=False)
-        self.message_user(request, "Selected users have been deactivated.")
-
-    make_inactive.short_description = "Deactivate selected users"
-
-    def has_delete_permission(self, request, obj=None):
-        if obj and obj.is_superuser:
-            return False
-        return super().has_delete_permission(request, obj)
-
-    def get_role(self, obj):
-        if obj.is_superuser:
-            return "Superuser"
-        elif obj.is_staff:
-            return "Staff"
-        return "User"
-
-    get_role.short_description = "Role"
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(is_superuser=False)
-        return queryset

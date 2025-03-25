@@ -1,0 +1,12 @@
+Collecting django-viewflow
+  Obtaining dependency information for django-viewflow from https://files.pythonhosted.org/packages/39/a7/42fa510f673aca59f022ffbd34e8c8c1e9b4f85ea7519c632c438ba84fca/django_viewflow-2.2.9-py3-none-any.whl.metadata
+  Downloading django_viewflow-2.2.9-py3-none-any.whl.metadata (13 kB)
+Requirement already satisfied: Django>=4.2 in ./.venv/lib/python3.10/site-packages (from django-viewflow) (5.0.1)
+Requirement already satisfied: django-filter>=2.3.0 in ./.venv/lib/python3.10/site-packages (from django-viewflow) (25.1)
+Requirement already satisfied: asgiref<4,>=3.7.0 in ./.venv/lib/python3.10/site-packages (from Django>=4.2->django-viewflow) (3.8.1)
+Requirement already satisfied: sqlparse>=0.3.1 in ./.venv/lib/python3.10/site-packages (from Django>=4.2->django-viewflow) (0.5.1)
+Requirement already satisfied: typing-extensions>=4 in ./.venv/lib/python3.10/site-packages (from asgiref<4,>=3.7.0->Django>=4.2->django-viewflow) (4.12.2)
+Downloading django_viewflow-2.2.9-py3-none-any.whl (15.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.6/15.6 MB 3.1 MB/s eta 0:00:00
+Installing collected packages: django-viewflow
+Successfully installed django-viewflow-2.2.9
