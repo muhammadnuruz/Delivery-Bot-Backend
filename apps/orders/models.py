@@ -19,12 +19,10 @@ class Order(models.Model):
     courier = models.ForeignKey(
         TelegramUsers, on_delete=models.SET_NULL, null=True, blank=True, related_name='deliveries'
     )
-
-    pickup_latitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="Pickup location latitude")
-    pickup_longitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="Pickup location longitude")
-    delivery_latitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="Delivery location latitude")
-    delivery_longitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="Delivery location longitude")
-
+    pickup_latitude = models.IntegerField(help_text="Pickup location latitude")
+    pickup_longitude = models.IntegerField(help_text="Pickup location longitude")
+    delivery_latitude = models.IntegerField(help_text="Delivery location latitude")
+    delivery_longitude = models.IntegerField(help_text="Delivery location longitude")
     image = models.ImageField(upload_to='order_images/', null=True, blank=True,
                               help_text="Optional image for the order")
     pickup_comment = models.TextField(null=True, blank=True, help_text="Additional comment for the pickup")

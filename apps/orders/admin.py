@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Order
 from django.utils.html import format_html
-from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter
 from django.contrib.admin import SimpleListFilter
 
 
@@ -39,16 +38,11 @@ class OrderAdmin(admin.ModelAdmin):
         'created_at',
     )
     list_display_links = ('id', 'user')
-    list_filter = (
-        'status',
-        ('user', RelatedDropdownFilter),
-        DeliveredStatusFilter,
-        ('created_at', DropdownFilter),
-    )
+    list_filter = ('status', 'user', 'created_at', DeliveredStatusFilter)
     search_fields = ('user__full_name', 'courier__full_name')
     ordering = ['-created_at']
     readonly_fields = ('created_at', 'updated_at')
-    list_editable = ('status',)  # Use the actual model field instead
+    list_editable = ('status',)
     list_per_page = 30
     date_hierarchy = 'created_at'
     save_as = True
@@ -67,10 +61,10 @@ class OrderAdmin(admin.ModelAdmin):
         return format_html('<span style="color: {};">{}</span>', color, obj.get_payment_by_display())
 
     def formatted_pickup_location(self, obj):
-        return format_html('<strong>{}</strong>', obj.pickup_location)
+        return f"({obj.pickup_latitude}, {obj.pickup_longitude})"
 
     def formatted_delivery_location(self, obj):
-        return format_html('<strong>{}</strong>', obj.delivery_location)
+        return f"({obj.delivery_latitude}, {obj.delivery_longitude})"
 
     status_colored.short_description = "Status"
     payment_by_colored.short_description = "Payment By"

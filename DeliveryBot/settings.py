@@ -27,7 +27,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
-    'jet',
+    'jazzmin',
     'corsheaders',
     'django_admin_listfilter_dropdown',
     'rangefilter',
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.orders',
 ]
 
+JET_REBOOT_THEME = "light-blue"
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 SILENCED_SYSTEM_CHECKS = ['security.W019']
 
@@ -175,11 +176,27 @@ LOCALE_PATHS = [
 ]
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Taxi Driver",
-    "site_header": "Taxi Driver Bot's Admin",
-    "site_brand": "Taxi Driver",
-    "welcome_sign": "Welcome to Admin menu!",
-    "copyright": "© Taxi Driver",
+    "site_title": "Admin Dashboard",
+    "site_header": "My Admin",
+    "site_brand": "Admin Panel",
+    "welcome_sign": "Welcome!",
+    "login_logo": None,
+    "copyright": "© 2025 Delivery Bot",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "dark_mode_theme": True,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+    },
+    "order_with_respect_to": ["auth", "orders", "users"],
+    "hide_models": ["auth.permission"],
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "users"},
+    ],
 }
 
 LANGUAGES = [
