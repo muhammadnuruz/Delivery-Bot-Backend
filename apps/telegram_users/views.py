@@ -12,6 +12,15 @@ class TelegramUsersListViewSet(ListAPIView):
     permission_classes = [AllowAny]
 
 
+class CouriersListViewSet(ListAPIView):
+    serializer_class = TelegramUsersSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = TelegramUsers.objects.filter(is_courier=True)
+        return queryset
+
+
 class TelegramUsersCreateViewSet(CreateAPIView):
     queryset = TelegramUsers.objects.all()
     serializer_class = TelegramUsersCreateSerializer

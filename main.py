@@ -1,5 +1,6 @@
 import logging
 import asyncio
+from courier_handlers import *
 from aiogram import executor
 from bot.handlers import *
 

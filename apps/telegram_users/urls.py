@@ -1,7 +1,7 @@
 from django.urls import path
 
 from apps.telegram_users.views import TelegramUsersDetailViewSet, TelegramUsersChatIdDetailViewSet, \
-    TelegramUsersUpdateViewSet, TelegramUsersCreateViewSet, TelegramUsersListViewSet
+    TelegramUsersUpdateViewSet, TelegramUsersCreateViewSet, TelegramUsersListViewSet, CouriersListViewSet
 
 urlpatterns = [
     path('', TelegramUsersListViewSet.as_view(),
@@ -13,5 +13,7 @@ urlpatterns = [
     path('detail/<int:pk>/', TelegramUsersDetailViewSet.as_view(),
          name='telegram-users-detail'),
     path('update/<int:pk>/', TelegramUsersUpdateViewSet.as_view(),
-         name='telegram-users-update')
+         name='telegram-users-update'),
+    path('couriers/', CouriersListViewSet.as_view(), name='couriers-list'),
+
 ]

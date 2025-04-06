@@ -6,11 +6,11 @@ from ..orders.models import Order
 
 @admin.register(TelegramUsers)
 class TelegramUsersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'username', 'chat_id', 'is_courier', 'is_available', 'created_at', 'updated_at')
+    list_display = ('id', 'full_name', 'username', 'chat_id', 'phone_number', 'is_courier', 'is_available', 'created_at', 'updated_at')
     list_display_links = ('id', 'full_name')
     list_editable = ('is_courier', 'is_available')
     list_filter = ('is_courier', 'is_available', 'created_at')
-    search_fields = ('full_name', 'username', 'chat_id')
+    search_fields = ('full_name', 'username', 'chat_id', 'phone_number')
     list_per_page = 20
 
     class OrderInline(admin.TabularInline):

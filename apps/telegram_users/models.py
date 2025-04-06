@@ -2,9 +2,10 @@ from django.db import models
 
 
 class TelegramUsers(models.Model):
-    chat_id = models.CharField(max_length=250)
+    chat_id = models.CharField(max_length=250, unique=True)
     username = models.CharField(max_length=100, null=True)
     full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15, null=True)
     is_courier = models.BooleanField(default=False)
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
