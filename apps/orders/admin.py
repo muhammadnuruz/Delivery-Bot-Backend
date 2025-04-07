@@ -94,13 +94,3 @@ class OrderAdmin(admin.ModelAdmin):
     @admin.action(description='Mark selected orders as Canceled')
     def mark_as_canceled(self, request, queryset):
         queryset.update(status='canceled')
-
-    def has_change_permission(self, request, obj=None):
-        if obj and obj.status == 'delivered':
-            return False
-        return super().has_change_permission(request, obj)
-
-    def has_delete_permission(self, request, obj=None):
-        if obj and obj.status == 'delivered':
-            return False
-        return super().has_delete_permission(request, obj)
