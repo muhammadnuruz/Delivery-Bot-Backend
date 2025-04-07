@@ -70,7 +70,7 @@ async def send_advert_to_users(msg: types.Message, state: FSMContext):
         text=f"Рассылка завершена ✅\n\n"
              f"✅ Доставлено {success_count} пользователям\n"
              f"❌ Не доставлено {failed_count} пользователям",
-        reply_markup=await main_menu_buttons()
+        reply_markup=await main_menu_buttons(msg.from_user.id)
     )
 
 
