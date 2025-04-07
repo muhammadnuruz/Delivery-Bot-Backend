@@ -21,8 +21,6 @@ class TelegramUsersAdmin(admin.ModelAdmin):
     inlines = [OrderInline]
 
     def save_model(self, request, obj, form, change):
-        if obj.username and not obj.username.isalnum():
-            raise ValidationError("Username faqat harf va raqamlardan iborat bo‘lishi kerak!")
         super().save_model(request, obj, form, change)
 
     actions = ['mark_as_courier', 'mark_as_available', 'mark_as_unavailable']
