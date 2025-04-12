@@ -12,10 +12,23 @@ import os
 
 
 @dp.message_handler(text=my_works)
-async def show_my_orders(message: types.Message):
-    chat_id = message.chat.id
+async def show_my_orders_filter(message: types.Message):
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(
+        InlineKeyboardButton("📅 Сегодня", callback_data="orders_filter:today"),
+        InlineKeyboardButton("🗓 Последние 7 дней", callback_data="orders_filter:week"),
+        InlineKeyboardButton("📆 Последние 30 дней", callback_data="orders_filter:month"),
+        InlineKeyboardButton("🔄 Все заказы", callback_data="orders_filter:all"),
+    )
+    await message.answer("Выберите период для отображения заказов:", reply_markup=markup)
 
-    url = f'http://127.0.0.1:8005/api/orders/courier/orders/?chat_id={chat_id}'
+
+@dp.callback_query_handler(lambda c: c.data.startswith("orders_filter:"))
+async def filter_orders_callback(callback_query: types.CallbackQuery):
+    period = callback_query.data.split(":")[1]
+    chat_id = callback_query.from_user.id
+
+    url = f'http://127.0.0.1:8005/api/orders/courier/orders/?chat_id={chat_id}&period={period}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -23,26 +36,22 @@ async def show_my_orders(message: types.Message):
                 orders = await response.json()
                 if orders['count'] > 0:
                     for order in orders['results']:
-                        if order['status'] == 'pending':
-                            status_text = "Ожидает"
-                        elif order['status'] == 'in_progress':
-                            status_text = "В процессе"
-                        elif order['status'] == 'delivered':
-                            status_text = "Доставлено"
-                        elif order['status'] == 'cancelled':
-                            status_text = "Отменено"
-                        else:
-                            status_text = "Неизвестно"
+                        status_map = {
+                            "pending": "Ожидает",
+                            "in_progress": "В процессе",
+                            "delivered": "Доставлено",
+                            "cancelled": "Отменено",
+                        }
+                        status_text = status_map.get(order['status'], "Неизвестно")
 
-                        if order['payment_by'] == 'user':
-                            payment_by_text = "Платеж от пользователя"
-                        else:
-                            payment_by_text = "Платеж от курьером"
-
-                        if order['deliver_payment_by'] == 'user':
-                            deliver_payment_by_text = "Платеж за доставку от пользователя"
-                        else:
-                            deliver_payment_by_text = "Платеж за доставку от заказчиком"
+                        payment_by_text = (
+                            "Платеж от пользователя" if order['payment_by'] == 'user'
+                            else "Платеж курьером"
+                        )
+                        deliver_payment_by_text = (
+                            "Платеж за доставку от пользователя" if order['deliver_payment_by'] == 'user'
+                            else "Платеж за доставку от заказчика"
+                        )
 
                         order_text = (
                             f"**Ваш заказ #{order['id']}**\n"
@@ -64,15 +73,16 @@ async def show_my_orders(message: types.Message):
                         photo_url = os.path.join(base_dir, 'images', order['image'][7:])
                         try:
                             with open(photo_url, 'rb') as photo_file:
-                                await message.answer_photo(photo_file, caption=order_text, parse_mode="Markdown")
+                                await bot.send_photo(callback_query.from_user.id, photo=photo_file,
+                                                     caption=order_text, parse_mode="Markdown")
                         except FileNotFoundError:
-                            await message.answer(f"Не удалось найти изображение для заказа #{order['id']}")
-
+                            await bot.send_message(callback_query.from_user.id, f"Не удалось найти изображение для заказа #{order['id']}")
                 else:
-                    await message.answer("У вас нет заказов.")
+                    await callback_query.message.answer("У вас нет заказов за выбранный период.")
             else:
-                await message.answer("Произошла ошибка при получении заказов.")
+                await callback_query.message.answer("Произошла ошибка при получении заказов.")
 
+    await callback_query.answer()
 
 @dp.callback_query_handler(lambda call: call.data.startswith("accept_order_"))
 async def accept_order(call: types.CallbackQuery):

@@ -28,17 +28,30 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response({"message": "Order is already cancelled!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+from django.utils import timezone
+from datetime import timedelta
+
 class CourierOrdersByChatIdViewSet(ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
         chat_id = self.request.query_params.get('chat_id')
+        period = self.request.query_params.get('period')  # new!
         courier = TelegramUsers.objects.filter(chat_id=chat_id, is_courier=True).first()
-
-        if courier:
-            return Order.objects.filter(courier=courier)
-        return Order.objects.none()
+        if not courier:
+            return Order.objects.none()
+        queryset = Order.objects.filter(courier=courier)
+        now = timezone.now()
+        if period == "today":
+            queryset = queryset.filter(created_at__date=now.date())
+        elif period == "week":
+            week_ago = now - timedelta(days=7)
+            queryset = queryset.filter(created_at__gte=week_ago)
+        elif period == "month":
+            month_ago = now - timedelta(days=30)
+            queryset = queryset.filter(created_at__gte=month_ago)
+        return queryset
 
 
 class OrdersUpdateViewSet(UpdateAPIView):
