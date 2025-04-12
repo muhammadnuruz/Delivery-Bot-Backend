@@ -2,7 +2,7 @@ import requests
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart, Text
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardRemove
 
 from bot.buttons.reply_buttons import main_menu_buttons
 from bot.buttons.text import back_main_menu_ru
@@ -25,7 +25,8 @@ async def back_main_menu_function_1(call: types.CallbackQuery, state: FSMContext
 @dp.message_handler(CommandStart())
 async def start_handler(msg: types.Message, state: FSMContext):
     await state.set_state('starting')
-    await msg.answer("👋 Привет! Пожалуйста, отправьте свой номер телефона для продолжения (введите вручную):", )
+    await msg.answer("👋 Привет! Пожалуйста, отправьте свой номер телефона для продолжения (введите вручную):",
+                     reply_markup=ReplyKeyboardRemove())
 
 
 @dp.message_handler(state='starting')
