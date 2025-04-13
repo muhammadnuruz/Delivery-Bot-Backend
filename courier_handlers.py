@@ -91,49 +91,44 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
 
 @dp.message_handler(text=free_works)
 async def free_works_filter(msg: types.Message):
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get("http://127.0.0.1:8005/api/orders/orders/?status=pending") as resp:
-                if resp.status != 200:
-                    await msg.answer("❌ Ошибка при получении заказов!")
-                    return
-                orders = await resp.json()
-
-            if not orders:
-                await msg.answer("📭 Пока нет доступных заказов.")
+    async with aiohttp.ClientSession() as session:
+        async with session.get("http://127.0.0.1:8005/api/orders/orders/?status=pending") as resp:
+            if resp.status != 200:
+                await msg.answer("❌ Ошибка при получении заказов!")
                 return
+            orders = await resp.json()
 
-            for order in orders:
-                user = json.loads(
-                    requests.get(url=f"http://127.0.0.1:8005/api/telegram-users/detail/{order['user']}").content)
-                caption = (
-                    f"📍 *Откуда:* {order['pickup_address']}\n"
-                    f"📍 *Куда:* {order['delivery_address']}\n"
-                    f"🛤 *Расстояние:* {order['distance_km']} км\n"
-                    f"💰 *Цена товара:* {order['order_price']} сум\n"
-                    f"🚚 *Цена доставки:* {order['delivery_price']} сум\n"
-                    f"💳 *Оплата товара:* {order['payment_by']}\n"
-                    f"💳 *Оплата доставки:* {order['deliver_payment_by']}\n"
-                    f"📝 *Комментарий к забору:* {order['pickup_comment']}\n"
-                    f"📝 *Комментарий к доставке:* {order['delivery_comment']}\n"
-                    f"📞 *Контакт:* {user['phone_number']}\n"
-                    f"📸 *Фото товара:*\n\n"
-                    f"🗺 *Посмотреть маршрут:* [Google Maps]({order['map']})"
-                )
+        if not orders:
+            await msg.answer("📭 Пока нет доступных заказов.")
+            return
 
-                accept_button = InlineKeyboardMarkup().add(
-                    InlineKeyboardButton("✅ Принять заказ", callback_data=f"accept_order_{order['id']}")
-                )
-                base_dir = os.path.dirname(os.path.abspath(__file__))
-                photo_url = os.path.join(base_dir, 'images', order['image'][7:])
-                with open(photo_url, 'rb') as photo_file:
-                    await msg.answer_photo(photo=photo_file, caption=caption,
-                                         parse_mode="Markdown",
-                                         reply_markup=accept_button)
+        for order in orders:
+            user = json.loads(
+                requests.get(url=f"http://127.0.0.1:8005/api/telegram-users/detail/{order['user']}").content)
+            caption = (
+                f"📍 *Откуда:* {order['pickup_address']}\n"
+                f"📍 *Куда:* {order['delivery_address']}\n"
+                f"🛤 *Расстояние:* {order['distance_km']} км\n"
+                f"💰 *Цена товара:* {order['order_price']} сум\n"
+                f"🚚 *Цена доставки:* {order['delivery_price']} сум\n"
+                f"💳 *Оплата товара:* {order['payment_by']}\n"
+                f"💳 *Оплата доставки:* {order['deliver_payment_by']}\n"
+                f"📝 *Комментарий к забору:* {order['pickup_comment']}\n"
+                f"📝 *Комментарий к доставке:* {order['delivery_comment']}\n"
+                f"📞 *Контакт:* {user['phone_number']}\n"
+                f"📸 *Фото товара:*\n\n"
+                f"🗺 *Посмотреть маршрут:* [Google Maps]({order['map']})"
+            )
 
-    except Exception as e:
-        await msg.answer(f"❌ Произошла ошибка:\n{str(e)}")
-
+            accept_button = InlineKeyboardMarkup().add(
+                InlineKeyboardButton("✅ Принять заказ", callback_data=f"accept_order_{order['id']}")
+            )
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            photo_url = os.path.join(base_dir, 'images', order['image'][7:])
+            with open(photo_url, 'rb') as photo_file:
+                await msg.answer_photo(photo=photo_file, caption=caption,
+                                     parse_mode="Markdown",
+                                     reply_markup=accept_button)
 
 @dp.callback_query_handler(lambda call: call.data.startswith("accept_order_"))
 async def accept_order(call: types.CallbackQuery):
