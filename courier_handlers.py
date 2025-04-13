@@ -65,8 +65,8 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
                             f"📝 *Комментарий по сбору:* {order['pickup_comment'] or 'Нет комментариев'}\n"
                             f"📝 *Комментарий по доставке:* {order['delivery_comment'] or 'Нет комментариев'}\n"
                             f"📸 *Фото заказа:*\n"
-                            f"🗺 *Посмотреть маршрут:* [Google Maps]({order['map']})\n\n"
-                            f"📞 *Контакт:* {user['phone_number']}"
+                            f"🗺 *Посмотреть маршрут:* [Google Maps]({order['map']})\n"
+                            f"📞 *Контакт:* {user['phone_number']}\n"
                             f"📑 *Статус:* {status_text}\n"
                             f"💳 *Оплата товара:* {payment_by_text}\n"
                             f"💳 *Оплата доставки:* {deliver_payment_by_text}\n\n"
@@ -116,7 +116,7 @@ async def free_works_filter(msg: types.Message):
                     f"💳 *Оплата доставки:* {order['deliver_payment_by']}\n"
                     f"📝 *Комментарий к забору:* {order['pickup_comment']}\n"
                     f"📝 *Комментарий к доставке:* {order['delivery_comment']}\n"
-                    f"📞 *Контакт:* {user['phone_number']}"
+                    f"📞 *Контакт:* {user['phone_number']}\n"
                     f"📸 *Фото товара:*\n\n"
                     f"🗺 *Посмотреть маршрут:* [Google Maps]({order['map']})"
                 )
@@ -216,7 +216,7 @@ async def cancel_order(call: types.CallbackQuery):
             f"💳 *Оплата доставки:* {new_order['deliver_payment_by']}\n"
             f"📝 *Комментарий к забору:* {new_order['pickup_comment']}\n"
             f"📝 *Комментарий к доставке:* {new_order['delivery_comment']}\n"
-            f"📞 *Контакт:* {user['phone_number']}"
+            f"📞 *Контакт:* {user['phone_number']}\n"
             f"📸 *Фото товара:*\n\n"
             f"🗺 *Посмотреть маршрут:* [Google Maps]({new_order['map']})"
         )
