@@ -103,6 +103,7 @@ async def free_works_filter(msg: types.Message):
             return
 
         for order in orders:
+            await msg.answer(order)
             user = json.loads(
                 requests.get(url=f"http://127.0.0.1:8005/api/telegram-users/detail/{order['user']}").content)
             caption = (
