@@ -3,14 +3,15 @@ import json
 import requests
 from aiogram.types import ReplyKeyboardMarkup
 
-from bot.buttons.text import adverts, none_advert, forward_advert, back_main_menu_ru, order, my_works
+from bot.buttons.text import adverts, none_advert, forward_advert, back_main_menu_ru, order, my_works, free_works
 
 
 async def main_menu_buttons(chat_id: int):
     tg_user = json.loads(requests.get(url=f"http://127.0.0.1:8005/api/telegram-users/chat_id/{chat_id}/").content)
     if tg_user['is_courier']:
         design = [
-            [my_works]
+            [my_works],
+            [free_works]
         ]
     else:
         design = [
