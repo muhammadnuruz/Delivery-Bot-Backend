@@ -124,9 +124,12 @@ async def free_works_filter(msg: types.Message):
                 accept_button = InlineKeyboardMarkup().add(
                     InlineKeyboardButton("✅ Принять заказ", callback_data=f"accept_order_{order['id']}")
                 )
-
-                await msg.answer_photo(photo=open(order['image'], 'rb'), caption=caption, parse_mode="Markdown",
-                                       reply_markup=accept_button)
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                photo_url = os.path.join(base_dir, 'images', order['image'][7:])
+                with open(photo_url, 'rb') as photo_file:
+                    await msg.answer_photo(photo=photo_file, caption=caption,
+                                         parse_mode="Markdown",
+                                         reply_markup=accept_button)
 
     except Exception as e:
         await msg.answer(f"❌ Произошла ошибка:\n{str(e)}")
