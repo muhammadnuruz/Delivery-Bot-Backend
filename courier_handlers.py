@@ -6,7 +6,7 @@ from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot.buttons.reply_buttons import main_menu_buttons
-from bot.buttons.text import my_works
+from bot.buttons.text import my_works, free_works
 from bot.dispatcher import dp, bot
 import os
 
@@ -89,7 +89,7 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
     await callback_query.answer()
 
 
-@dp.message_handler(text=my_works)
+@dp.message_handler(text=free_works)
 async def free_works_filter(msg: types.Message):
     try:
         async with aiohttp.ClientSession() as session:
