@@ -52,7 +52,9 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
                             "Платеж за доставку от пользователя" if order['deliver_payment_by'] == 'user'
                             else "Платеж за доставку от заказчика"
                         )
-
+                        user = json.loads(
+                            requests.get(
+                                url=f"http://127.0.0.1:8005/api/telegram-users/detail/{order['user']}").content)
                         order_text = (
                             f"**Ваш заказ #{order['id']}**\n"
                             f"📍 *Откуда:* {order['pickup_address']}\n"
@@ -64,6 +66,7 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
                             f"📝 *Комментарий по доставке:* {order['delivery_comment'] or 'Нет комментариев'}\n"
                             f"📸 *Фото заказа:*\n"
                             f"🗺 *Посмотреть маршрут:* [Google Maps]({order['map']})\n\n"
+                            f"📞 *Контакт:* {user['phone_number']}"
                             f"📑 *Статус:* {status_text}\n"
                             f"💳 *Оплата товара:* {payment_by_text}\n"
                             f"💳 *Оплата доставки:* {deliver_payment_by_text}\n\n"
@@ -76,13 +79,15 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
                                 await bot.send_photo(callback_query.from_user.id, photo=photo_file,
                                                      caption=order_text, parse_mode="Markdown")
                         except FileNotFoundError:
-                            await bot.send_message(callback_query.from_user.id, f"Не удалось найти изображение для заказа #{order['id']}")
+                            await bot.send_message(callback_query.from_user.id,
+                                                   f"Не удалось найти изображение для заказа #{order['id']}")
                 else:
                     await callback_query.message.answer("У вас нет заказов за выбранный период.")
             else:
                 await callback_query.message.answer("Произошла ошибка при получении заказов.")
 
     await callback_query.answer()
+
 
 @dp.callback_query_handler(lambda call: call.data.startswith("accept_order_"))
 async def accept_order(call: types.CallbackQuery):
@@ -156,6 +161,8 @@ async def cancel_order(call: types.CallbackQuery):
         }
         new_order = json.loads(
             requests.patch(url=f"http://127.0.0.1:8005/api/orders/update/{order_id}/", json=s_data).content)
+        user = json.loads(
+            requests.get(url=f"http://127.0.0.1:8005/api/telegram-users/detail/{new_order['user']}").content)
         order_summary = (
             f"📍 *Откуда:* {new_order['pickup_address']}\n"
             f"📍 *Куда:* {new_order['delivery_address']}\n"
@@ -166,6 +173,7 @@ async def cancel_order(call: types.CallbackQuery):
             f"💳 *Оплата доставки:* {new_order['deliver_payment_by']}\n"
             f"📝 *Комментарий к забору:* {new_order['pickup_comment']}\n"
             f"📝 *Комментарий к доставке:* {new_order['delivery_comment']}\n"
+            f"📞 *Контакт:* {user['phone_number']}"
             f"📸 *Фото товара:*\n\n"
             f"🗺 *Посмотреть маршрут:* [Google Maps]({new_order['map']})"
         )

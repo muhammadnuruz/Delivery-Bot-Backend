@@ -220,6 +220,7 @@ async def set_product_photo(msg: types.Message, state: FSMContext):
                         f"💳 *Оплата доставки:* {data.get('delivery_payer')}\n"
                         f"📝 *Комментарий к забору:* {data.get('pickup_comment', 'Нет')}\n"
                         f"📝 *Комментарий к доставке:* {data.get('delivery_comment', 'Нет')}\n"
+                        f"📞 *Контакт:* {tg_user['phone_number']}"
                         f"📸 *Фото товара:*\n\n"
                         f"🗺 *Посмотреть маршрут:* [Google Maps]({directions_link})"
                     )
