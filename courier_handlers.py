@@ -59,7 +59,7 @@ async def filter_orders_callback(callback_query: types.CallbackQuery):
                             f"**Ваш заказ #{order['id']}**\n"
                             f"📍 *Откуда:* {order['pickup_address']}\n"
                             f"📍 *Куда:* {order['delivery_address']}\n"
-                            f"🛤 *Расстояние:* {order['distance_km']} км\n"
+                            f"🛤 *Приблизительно км::* {order['distance_km']} км\n"
                             f"💰 *Цена товара:* {order['order_price']} сум\n"
                             f"🚚 *Цена доставки:* {order['delivery_price']} сум\n"
                             f"📝 *Комментарий по сбору:* {order['pickup_comment'] or 'Нет комментариев'}\n"
@@ -109,7 +109,7 @@ async def free_works_filter(msg: types.Message):
                 caption = (
                     f"📍 *Откуда:* {order['pickup_address']}\n"
                     f"📍 *Куда:* {order['delivery_address']}\n"
-                    f"🛤 *Расстояние:* {order['distance_km']} км\n"
+                    f"🛤 *Приблизительно км::* {order['distance_km']} км\n"
                     f"💰 *Цена товара:* {order['order_price']} сум\n"
                     f"🚚 *Цена доставки:* {order['delivery_price']} сум\n"
                     f"💳 *Оплата товара:* {order['payment_by']}\n"
@@ -212,7 +212,7 @@ async def cancel_order(call: types.CallbackQuery):
         order_summary = (
             f"📍 *Откуда:* {new_order['pickup_address']}\n"
             f"📍 *Куда:* {new_order['delivery_address']}\n"
-            f"🛤 *Расстояние:* {new_order['distance_km']} км\n"
+            f"🛤 *Приблизительно км::* {new_order['distance_km']} км\n"
             f"💰 *Цена товара:* {new_order['order_price']} сум\n"
             f"🚚 *Цена доставки:* {new_order['delivery_price']} сум\n"
             f"💳 *Оплата товара:* {new_order['payment_by']}\n"

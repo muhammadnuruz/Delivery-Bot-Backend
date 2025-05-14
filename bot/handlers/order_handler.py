@@ -213,7 +213,7 @@ async def set_product_photo(msg: types.Message, state: FSMContext):
                     order_summary = (
                         f"📍 *Откуда:* {pickup_address}\n"
                         f"📍 *Куда:* {delivery_address}\n"
-                        f"🛤 *Расстояние:* {distance_km} км\n"
+                        f"🛤 *Приблизительно км:* {distance_km} км\n"
                         f"💰 *Цена товара:* {data.get('product_price', 0)} сум\n"
                         f"🚚 *Цена доставки:* {data.get('delivery_price', 0)} сум\n"
                         f"💳 *Оплата товара:* {data.get('product_payer')}\n"
