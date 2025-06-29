@@ -37,7 +37,7 @@ async def phone_handler(msg: types.Message, state: FSMContext):
         "full_name": msg.from_user.full_name,
         "phone_number": msg.text
     }
-    requests.post(url="http://127.0.0.1:8005/api/telegram-users/create/", data=data)
+    requests.post(url="http://127.0.0.1:8000/api/telegram-users/create/", data=data)
     await msg.answer(text="👋 Привет! Добро пожаловать в наш бот. \n\n✅ Выберите одну из следующих услуг:",
                      reply_markup=await main_menu_buttons(msg.from_user.id))
     await state.finish()

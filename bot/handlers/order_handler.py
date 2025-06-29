@@ -15,7 +15,7 @@ from bot.buttons.text import order
 from bot.dispatcher import dp, Config, bot
 from aiogram.dispatcher.filters import Text
 
-API_URL = "http://127.0.0.1:8005/api/orders/orders/"
+API_URL = "http://127.0.0.1:8000/api/orders/orders/"
 
 SAVE_PATH = "images/order_images/"
 
@@ -147,7 +147,7 @@ def google_maps_directions_link(lat1, lon1, lat2, lon2):
 async def set_product_photo(msg: types.Message, state: FSMContext):
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(f"http://127.0.0.1:8005/api/telegram-users/chat_id/{msg.from_user.id}/") as resp:
+            async with session.get(f"http://127.0.0.1:8000/api/telegram-users/chat_id/{msg.from_user.id}/") as resp:
                 if resp.status != 200:
                     await msg.answer("❌ Ошибка при получении данных пользователя!")
                     return
@@ -204,7 +204,7 @@ async def set_product_photo(msg: types.Message, state: FSMContext):
                 "map": directions_link
             }
 
-            async with session.post("http://127.0.0.1:8005/api/orders/orders/", json=order_data) as api_resp:
+            async with session.post("http://127.0.0.1:8000/api/orders/orders/", json=order_data) as api_resp:
                 if api_resp.status == 201:
                     response_data = await api_resp.json()
                     order_id = response_data.get("id")
@@ -234,7 +234,7 @@ async def set_product_photo(msg: types.Message, state: FSMContext):
                                            reply_markup=cancel_button)
 
                     couriers = json.loads(
-                        requests.get(url=f"http://127.0.0.1:8005/api/telegram-users/couriers/").content)['results']
+                        requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/couriers/").content)['results']
                     for courier in couriers:
                         if courier['is_available']:
                             await bot.send_photo(chat_id=courier['chat_id'], photo=photo_id, caption=order_summary,
@@ -256,7 +256,7 @@ async def cancel_order(call: types.CallbackQuery):
     order_id = call.data.split("_")[-1]
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"http://127.0.0.1:8005/api/orders/orders/{order_id}/cancel/") as resp:
+        async with session.post(f"http://127.0.0.1:8000/api/orders/orders/{order_id}/cancel/") as resp:
             if resp.status == 200:
                 await call.message.delete()
                 await call.message.answer("❌ Ваш заказ был отменён!",

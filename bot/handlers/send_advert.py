@@ -42,7 +42,7 @@ async def none_advert_handler(msg: types.Message, state: FSMContext):
 async def send_advert_to_users(msg: types.Message, state: FSMContext):
     await state.finish()
     try:
-        users = json.loads(requests.get(f"http://127.0.0.1:8005/api/telegram-users/").content)['results']
+        users = json.loads(requests.get(f"http://127.0.0.1:8000/api/telegram-users/").content)['results']
     except (requests.exceptions.RequestException, json.JSONDecodeError):
         await msg.answer("Ошибка при получении списка пользователей ❌")
         return
@@ -86,7 +86,7 @@ async def send_forward_to_users(msg: types.Message, state: FSMContext):
     await state.finish()
 
     try:
-        response = requests.get("http://127.0.0.1:8005/api/telegram-users/")
+        response = requests.get("http://127.0.0.1:8000/api/telegram-users/")
         users = response.json().get("results", [])
     except (requests.RequestException, json.JSONDecodeError):
         await msg.answer("Ошибка при получении списка пользователей ❌")
