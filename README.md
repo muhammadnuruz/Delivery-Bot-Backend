@@ -1,6 +1,6 @@
 # 🚚 Delivery-Bot Backend – Django-based Logistics Platform
 
-> 📍 Real-world delivery engine for **Bukhara**, inspired by **Yandex Go**
+> 📍 Real-world delivery engine for **Bukhara**
 
 ---
 
