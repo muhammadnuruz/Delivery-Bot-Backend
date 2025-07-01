@@ -415,3 +415,5 @@ fabric.properties
 venv
 images
 images/
+staticfiles
+staticfiles/
