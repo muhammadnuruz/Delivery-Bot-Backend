@@ -413,4 +413,5 @@ fabric.properties
 .idea
 .idea/
 venv
-
+images
+images/
